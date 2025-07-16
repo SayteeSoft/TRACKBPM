@@ -3,6 +3,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
 import { Footer } from '@/components/footer';
 import { Header } from '@/components/header';
+import { SearchForm } from '@/components/search-form';
 
 export const metadata: Metadata = {
   title: 'TRACK⚡BPM',
@@ -23,6 +24,9 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased flex flex-col min-h-screen bg-background">
         <Header />
+        <div className="relative -mt-8 mb-8 z-10">
+          <SearchForm />
+        </div>
         <div className="flex-grow">
           {children}
         </div>

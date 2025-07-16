@@ -3,31 +3,14 @@
 import { useState, useEffect, Fragment } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { Loader2, Search } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { Loader2 } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { analyzeSongAction, getTrendingSongsAction, SongAnalysisResult } from "./actions";
 import { SpotifyIcon, AppleMusicIcon, AmazonMusicIcon } from "@/components/icons";
 import { Skeleton } from "@/components/ui/skeleton";
-
-const formSchema = z.object({
-  query: z.string().min(3, {
-    message: "Please enter at least 3 characters.",
-  }),
-});
 
 const AdBanner = () => (
     <Card className="overflow-hidden shadow-md animate-in fade-in-0 duration-500 bg-muted/50">
@@ -94,7 +77,6 @@ const SongCard = ({ result }: { result: SongAnalysisResult }) => {
   );
 };
 
-
 const SongCardSkeleton = () => (
   <Card className="overflow-hidden shadow-md">
     <div className="flex">
@@ -131,18 +113,39 @@ const SongCardSkeleton = () => (
 );
 
 export default function Home() {
+  const searchParams = useSearchParams();
   const [searchResults, setSearchResults] = useState<SongAnalysisResult[]>([]);
   const [trendingSongs, setTrendingSongs] = useState<SongAnalysisResult[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSearchLoading, setIsSearchLoading] = useState(false);
   const [isTrendingLoading, setIsTrendingLoading] = useState(true);
   const { toast } = useToast();
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      query: "",
-    },
-  });
+  useEffect(() => {
+    const query = searchParams.get('q');
+    if (query) {
+      const performSearch = async () => {
+        setIsSearchLoading(true);
+        try {
+          const parts = query.split("-").map((p) => p.trim());
+          const artist = parts[0];
+          const title = parts.length > 1 ? parts.slice(1).join(' ') : '';
+          const result = await analyzeSongAction({ artist, title });
+          setSearchResults([result]);
+        } catch (error) {
+          toast({
+            variant: "destructive",
+            title: "Analysis Failed",
+            description: error instanceof Error ? error.message : "An unknown error occurred.",
+          });
+        } finally {
+          setIsSearchLoading(false);
+        }
+      };
+      performSearch();
+    } else {
+        setSearchResults([]);
+    }
+  }, [searchParams, toast]);
 
   useEffect(() => {
     const fetchTrendingSongs = async () => {
@@ -160,90 +163,27 @@ export default function Home() {
         setIsTrendingLoading(false);
       }
     };
-    fetchTrendingSongs();
-  }, [toast]);
-
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsLoading(true);
-    try {
-      const parts = values.query.split("-").map((p) => p.trim());
-      const artist = parts[0];
-      const title = parts.length > 1 ? parts.slice(1).join(' ') : '';
-
-      if (!artist || !title) {
-        toast({
-          variant: "destructive",
-          title: "Invalid Format",
-          description: "Please enter the song as 'Artist - Title'.",
-        });
-        setIsLoading(false);
-        return;
-      }
-
-      const result = await analyzeSongAction({ artist, title });
-      setSearchResults((prevResults) => [result, ...prevResults]);
-      form.reset();
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Analysis Failed",
-        description:
-          error instanceof Error ? error.message : "An unknown error occurred.",
-      });
-    } finally {
-      setIsLoading(false);
+    if (searchResults.length === 0 && !searchParams.get('q')) {
+        fetchTrendingSongs();
     }
-  }
+  }, [toast, searchResults, searchParams]);
+
+  const showTrending = !isSearchLoading && searchResults.length === 0 && !searchParams.get('q');
 
   return (
     <main className="w-full font-body">
-      <div className="relative -mt-8 mb-8">
-        <div className="max-w-3xl mx-auto px-4">
-          <Card className="shadow-2xl rounded-lg">
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="flex items-center p-2">
-                <FormField
-                  control={form.control}
-                  name="query"
-                  render={({ field }) => (
-                    <FormItem className="flex-grow">
-                      <FormControl>
-                        <div className="relative">
-                          <Input
-                            placeholder="type a song, get a bpm"
-                            {...field}
-                            className="text-lg border-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-14 pl-4 pr-12"
-                          />
-                           <Button type="submit" disabled={isLoading} size="icon" className="absolute right-2 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-transparent hover:bg-muted text-foreground">
-                            {isLoading ? (
-                              <Loader2 className="h-5 w-5 animate-spin" />
-                            ) : (
-                              <Search className="h-5 w-5" />
-                            )}
-                          </Button>
-                        </div>
-                      </FormControl>
-                       <FormMessage className="text-center pt-2 px-4" />
-                    </FormItem>
-                  )}
-                />
-              </form>
-            </Form>
-          </Card>
-          <p className="text-center text-sm text-muted-foreground mt-2">
-            For example: <span className="font-bold text-foreground">david bowie - space oddity</span> (which is 81 BPM, by the way)
-          </p>
-        </div>
-      </div>
       <div className="container mx-auto px-4 py-8 md:py-12">
         <section className="space-y-4 max-w-3xl mx-auto">
+          {isSearchLoading && <SongCardSkeleton />}
           {searchResults.map((result, index) => (
             <SongCard key={`search-${result.title}-${index}`} result={result} />
           ))}
 
-          {isTrendingLoading ? (
+          {isTrendingLoading && showTrending && (
             Array.from({ length: 9 }).map((_, index) => <SongCardSkeleton key={`skeleton-${index}`} />)
-          ) : (
+          )}
+          
+          {showTrending && (
             trendingSongs.map((result, index) => (
               <Fragment key={`trending-${result.title}-${index}`}>
                 <SongCard result={result} />
