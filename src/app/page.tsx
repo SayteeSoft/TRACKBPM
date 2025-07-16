@@ -202,7 +202,7 @@ export default function Home() {
             <h1 className="text-6xl md:text-8xl font-black tracking-tighter flex items-center justify-center">
                 <span>BPM</span>
                 <LightningIcon className="w-12 h-12 md:w-16 md:h-16 mx-1 text-white fill-white" />
-                <span>Detch</span>
+                <span>Detech</span>
             </h1>
         </div>
       </header>
