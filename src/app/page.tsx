@@ -22,7 +22,6 @@ import { useToast } from "@/hooks/use-toast";
 import { analyzeSongAction, getTrendingSongsAction, SongAnalysisResult } from "./actions";
 import { SpotifyIcon, AppleMusicIcon, AmazonMusicIcon } from "@/components/icons";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Header } from "@/components/header";
 
 const formSchema = z.object({
   query: z.string().min(3, {
@@ -195,68 +194,65 @@ export default function Home() {
       setIsLoading(false);
     }
   }
-  
-  const searchForm = (
-      <Card className="max-w-3xl mx-auto shadow-2xl rounded-lg">
-        <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="flex items-center p-2">
-              <FormField
-                control={form.control}
-                name="query"
-                render={({ field }) => (
-                  <FormItem className="flex-grow">
-                    <FormControl>
-                      <div className="relative">
-                        <Input
-                          placeholder="type a song, get a bpm"
-                          {...field}
-                          className="text-lg border-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-14 pl-4 pr-12"
-                        />
-                         <Button type="submit" disabled={isLoading} size="icon" className="absolute right-2 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-transparent hover:bg-muted text-foreground">
-                          {isLoading ? (
-                            <Loader2 className="h-5 w-5 animate-spin" />
-                          ) : (
-                            <Search className="h-5 w-5" />
-                          )}
-                        </Button>
-                      </div>
-                    </FormControl>
-                     <FormMessage className="text-center mt-2 max-w-3xl mx-auto px-4" />
-                  </FormItem>
-                )}
-              />
-            </form>
-          </Form>
-      </Card>
-  );
 
   return (
-    <>
-      <Header hero={searchForm}>
-          <p className="text-center text-sm text-primary-foreground/80 mt-2">
-            For example: <span className="font-bold text-primary-foreground">david bowie - space oddity</span> (which is 81 BPM, by the way)
+    <main className="w-full font-body">
+      <div className="relative -mt-8 mb-8">
+        <div className="max-w-3xl mx-auto px-4">
+          <Card className="shadow-2xl rounded-lg">
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="flex items-center p-2">
+                <FormField
+                  control={form.control}
+                  name="query"
+                  render={({ field }) => (
+                    <FormItem className="flex-grow">
+                      <FormControl>
+                        <div className="relative">
+                          <Input
+                            placeholder="type a song, get a bpm"
+                            {...field}
+                            className="text-lg border-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-14 pl-4 pr-12"
+                          />
+                           <Button type="submit" disabled={isLoading} size="icon" className="absolute right-2 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-transparent hover:bg-muted text-foreground">
+                            {isLoading ? (
+                              <Loader2 className="h-5 w-5 animate-spin" />
+                            ) : (
+                              <Search className="h-5 w-5" />
+                            )}
+                          </Button>
+                        </div>
+                      </FormControl>
+                       <FormMessage className="text-center pt-2 px-4" />
+                    </FormItem>
+                  )}
+                />
+              </form>
+            </Form>
+          </Card>
+          <p className="text-center text-sm text-muted-foreground mt-2">
+            For example: <span className="font-bold text-foreground">david bowie - space oddity</span> (which is 81 BPM, by the way)
           </p>
-      </Header>
-      <main className="w-full font-body">
-        <div className="container mx-auto px-4 py-8 md:py-12">
-          <section className="mt-12 space-y-4 max-w-3xl mx-auto">
-            {searchResults.map((result, index) => (
-              <SongCard key={`search-${result.title}-${index}`} result={result} />
-            ))}
-
-            {isTrendingLoading ? (
-              Array.from({ length: 9 }).map((_, index) => <SongCardSkeleton key={`skeleton-${index}`} />)
-            ) : (
-              trendingSongs.map((result, index) => (
-                <Fragment key={`trending-${result.title}-${index}`}>
-                  <SongCard result={result} />
-                  {(index + 1) % 3 === 0 && <AdBanner />}
-                </Fragment>
-              ))
-            )}
-          </section>
         </div>
-      </main>
-    </>
+      </div>
+      <div className="container mx-auto px-4 py-8 md:py-12">
+        <section className="space-y-4 max-w-3xl mx-auto">
+          {searchResults.map((result, index) => (
+            <SongCard key={`search-${result.title}-${index}`} result={result} />
+          ))}
+
+          {isTrendingLoading ? (
+            Array.from({ length: 9 }).map((_, index) => <SongCardSkeleton key={`skeleton-${index}`} />)
+          ) : (
+            trendingSongs.map((result, index) => (
+              <Fragment key={`trending-${result.title}-${index}`}>
+                <SongCard result={result} />
+                {(index + 1) % 3 === 0 && <AdBanner />}
+              </Fragment>
+            ))
+          )}
+        </section>
+      </div>
+    </main>
   );
 }

@@ -1,9 +1,7 @@
-import { Header } from "@/components/header";
 
 export default function TermsOfServicePage() {
     return (
         <>
-            <Header />
             <main className="container mx-auto px-4 py-8">
                 <div className="max-w-3xl mx-auto prose prose-lg">
                     <h1>Terms of Service</h1>
