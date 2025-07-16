@@ -18,19 +18,23 @@ export type SongAnalysisResult = DetectBpmAndKeyOutput & {
   description?: string;
 };
 
+function spotifyNotConfigured() {
+    return !process.env.SPOTIFY_CLIENT_ID || !process.env.SPOTIFY_CLIENT_SECRET;
+}
+
 export async function analyzeSongAction(input: DetectBpmAndKeyInput, includeDescription = false): Promise<SongAnalysisResult> {
   const parsedInput = ActionInputSchema.safeParse(input);
   if (!parsedInput.success) {
     throw new Error('Invalid input: Title and artist are required.');
   }
 
-  try {
-    // Check for environment variables
-    if (!process.env.SPOTIFY_CLIENT_ID || !process.env.SPOTIFY_CLIENT_SECRET) {
-      console.error('Spotify API credentials are not set in the environment.');
-      throw new Error('The Spotify API is not configured. Please add credentials to the environment variables.');
-    }
+  // Check for environment variables first
+  if (spotifyNotConfigured()) {
+    console.error('Spotify API credentials are not set in the environment.');
+    throw new Error('The Spotify API is not configured. Please add credentials to the environment variables.');
+  }
 
+  try {
     const songInfo = await detectBpmAndKey(parsedInput.data);
     const albumArt = await generateAlbumArt({ artist: parsedInput.data.artist, title: parsedInput.data.title });
     
@@ -60,13 +64,13 @@ export async function analyzeSongAction(input: DetectBpmAndKeyInput, includeDesc
 }
 
 export async function getTrendingSongsAction(): Promise<SongAnalysisResult[]> {
+  // Check for environment variables before fetching
+  if (spotifyNotConfigured()) {
+      console.warn('Spotify API credentials not set. Returning empty trending list.');
+      return [];
+  }
+    
   try {
-    // Check for environment variables before fetching
-    if (!process.env.SPOTIFY_CLIENT_ID || !process.env.SPOTIFY_CLIENT_SECRET) {
-        console.warn('Spotify API credentials not set. Returning empty trending list.');
-        return [];
-    }
-      
     const trendingSongsList = await getTrendingSongs();
     
     const songAnalysisPromises = trendingSongsList.map(song => analyzeSongAction(song));
