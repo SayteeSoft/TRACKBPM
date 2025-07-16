@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Fragment } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -17,7 +17,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { analyzeSongAction, getTrendingSongsAction, SongAnalysisResult } from "./actions";
 import { SpotifyIcon, AppleMusicIcon, AmazonMusicIcon } from "@/components/icons";
@@ -57,64 +57,56 @@ const AdBanner = () => (
     </Card>
 );
 
-const SongCard = ({ result }: { result: SongAnalysisResult }) => {
-  const router = useRouter();
-
-  const handleCardClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    // Only trigger navigation if the click is not on an existing link
-    if (e.target instanceof HTMLElement && e.target.closest('a')) {
-      return;
-    }
-    window.open(`https://open.spotify.com/search/${result.artist} ${result.title}`, '_blank');
-  };
-  
+const SongCard = ({ result }: { result: SongAnalysisResult }) => {  
   return (
     <Card className="overflow-hidden shadow-md animate-in fade-in-0 duration-500">
-      <div className="flex">
-        <div className="flex-shrink-0">
-          <Image
-            src={result.albumArt}
-            alt={`Album art for ${result.title}`}
-            width={100}
-            height={100}
-            data-ai-hint="album cover"
-            className="object-cover h-full"
-          />
-        </div>
-        <div className="flex-grow flex flex-col">
-          <div className="p-4 flex justify-between items-start flex-grow cursor-pointer hover:bg-muted/50 transition-colors" onClick={handleCardClick}>
-              <div>
-                  <p className="text-sm uppercase text-muted-foreground font-semibold tracking-wider">{result.artist}</p>
-                  <h2 className="text-xl font-bold text-foreground">{result.title}</h2>
-              </div>
-              <div className="flex items-start space-x-6 text-right">
-                  <div>
-                      <p className="text-xs uppercase text-muted-foreground font-semibold">Key</p>
-                      <p className="text-lg font-bold">{result.key}</p>
-                  </div>
+       <Link href={`/song/${encodeURIComponent(result.artist)}/${encodeURIComponent(result.title)}`} className="block hover:bg-muted/50 transition-colors">
+        <div className="flex">
+          <div className="flex-shrink-0">
+            <Image
+              src={result.albumArt}
+              alt={`Album art for ${result.title}`}
+              width={100}
+              height={100}
+              data-ai-hint="album cover"
+              className="object-cover h-full"
+            />
+          </div>
+          <div className="flex-grow flex flex-col">
+            <div className="p-4 flex justify-between items-start flex-grow">
+                <div>
+                    <p className="text-sm uppercase text-muted-foreground font-semibold tracking-wider">{result.artist}</p>
+                    <h2 className="text-xl font-bold text-foreground">{result.title}</h2>
+                </div>
+                <div className="flex items-start space-x-6 text-right">
                     <div>
-                      <p className="text-xs uppercase text-muted-foreground font-semibold">Duration</p>
-                      <p className="text-lg font-bold">{result.duration}</p>
-                  </div>
-                  <div>
-                      <p className="text-xs uppercase text-muted-foreground font-semibold">BPM</p>
-                      <p className="text-lg font-bold">{result.bpm}</p>
-                  </div>
-              </div>
-          </div>
-            <div className="border-t flex">
-              <a href={`https://open.spotify.com/search/${result.artist} ${result.title}`} target="_blank" rel="noopener noreferrer" className="flex-1 p-2 flex items-center justify-center gap-2 text-sm text-muted-foreground hover:bg-muted transition-colors">
-                  <SpotifyIcon className="h-4 w-4" /> Spotify
-              </a>
-              <a href={`https://music.apple.com/us/search?term=${result.artist} ${result.title}`} target="_blank" rel="noopener noreferrer" className="flex-1 p-2 flex items-center justify-center gap-2 text-sm text-muted-foreground hover:bg-muted transition-colors border-l">
-                  <AppleMusicIcon className="h-4 w-4" /> Apple Music
-              </a>
-              <a href={`https://music.amazon.com/search/${result.artist} ${result.title}`} target="_blank" rel="noopener noreferrer" className="flex-1 p-2 flex items-center justify-center gap-2 text-sm text-muted-foreground hover:bg-muted transition-colors border-l">
-                  <AmazonMusicIcon className="h-4 w-4" /> Amazon
-              </a>
+                        <p className="text-xs uppercase text-muted-foreground font-semibold">Key</p>
+                        <p className="text-lg font-bold">{result.key}</p>
+                    </div>
+                      <div>
+                        <p className="text-xs uppercase text-muted-foreground font-semibold">Duration</p>
+                        <p className="text-lg font-bold">{result.duration}</p>
+                    </div>
+                    <div>
+                        <p className="text-xs uppercase text-muted-foreground font-semibold">BPM</p>
+                        <p className="text-lg font-bold">{result.bpm}</p>
+                    </div>
+                </div>
+            </div>
           </div>
         </div>
-      </div>
+      </Link>
+       <div className="border-t flex">
+            <a href={`https://open.spotify.com/search/${result.artist} ${result.title}`} target="_blank" rel="noopener noreferrer" className="flex-1 p-2 flex items-center justify-center gap-2 text-sm text-muted-foreground hover:bg-muted transition-colors">
+                <SpotifyIcon className="h-4 w-4" /> Spotify
+            </a>
+            <a href={`https://music.apple.com/us/search?term=${result.artist} ${result.title}`} target="_blank" rel="noopener noreferrer" className="flex-1 p-2 flex items-center justify-center gap-2 text-sm text-muted-foreground hover:bg-muted transition-colors border-l">
+                <AppleMusicIcon className="h-4 w-4" /> Apple Music
+            </a>
+            <a href={`https://music.amazon.com/search/${result.artist} ${result.title}`} target="_blank" rel="noopener noreferrer" className="flex-1 p-2 flex items-center justify-center gap-2 text-sm text-muted-foreground hover:bg-muted transition-colors border-l">
+                <AmazonMusicIcon className="h-4 w-4" /> Amazon
+            </a>
+        </div>
     </Card>
   );
 };
@@ -234,9 +226,8 @@ export default function Home() {
 
       <div className="container mx-auto px-4 py-8 md:py-12 -mt-16">
         <Card className="max-w-3xl mx-auto shadow-2xl rounded-lg">
-          <CardContent className="p-2">
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="flex items-center">
+              <form onSubmit={form.handleSubmit(onSubmit)} className="flex items-center p-2">
                 <FormField
                   control={form.control}
                   name="query"
@@ -264,7 +255,6 @@ export default function Home() {
                 />
               </form>
             </Form>
-          </CardContent>
         </Card>
         
         <p className="text-center text-sm text-muted-foreground mt-2">
