@@ -15,7 +15,7 @@ export type SongDetails = z.infer<typeof SongDetailsSchema>;
 
 // Initialize Spotify API client
 const spotifyApi = new SpotifyWebApi({
-  clientId: process.env.SPOTIFY_CLIENT_ID,
+  clientId: process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID,
 });
 
 // Cache for the access token
@@ -37,7 +37,7 @@ async function getAccessToken() {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: 'grant_type=client_credentials&client_id=' + process.env.SPOTIFY_CLIENT_ID,
+        body: 'grant_type=client_credentials&client_id=' + process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID,
       });
   
       if (!response.ok) {
@@ -58,7 +58,7 @@ async function getAccessToken() {
       return accessToken;
     } catch (err) {
       console.error('Something went wrong when retrieving an access token', err);
-      throw new Error('Could not authenticate with Spotify. Please ensure your SPOTIFY_CLIENT_ID is correct.');
+      throw new Error('Could not authenticate with Spotify. Please ensure your NEXT_PUBLIC_SPOTIFY_CLIENT_ID is correct.');
     }
   }
 

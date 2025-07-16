@@ -20,7 +20,7 @@ export type SongAnalysisResult = DetectBpmAndKeyOutput & {
 };
 
 function spotifyNotConfigured() {
-    return !process.env.SPOTIFY_CLIENT_ID;
+    return !process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID;
 }
 
 export async function analyzeSongAction(input: DetectBpmAndKeyInput, includeDescription = false): Promise<SongAnalysisResult> {
@@ -32,7 +32,7 @@ export async function analyzeSongAction(input: DetectBpmAndKeyInput, includeDesc
   // Check for environment variables first
   if (spotifyNotConfigured()) {
     console.error('Spotify API credentials are not set in the environment.');
-    throw new Error('The Spotify integration is not configured. Please add your SPOTIFY_CLIENT_ID as an environment variable in your hosting provider settings.');
+    throw new Error('The Spotify integration is not configured. Please add your NEXT_PUBLIC_SPOTIFY_CLIENT_ID as an environment variable in your hosting provider settings.');
   }
 
   try {
@@ -67,7 +67,7 @@ export async function analyzeSongAction(input: DetectBpmAndKeyInput, includeDesc
 export async function getTrendingSongsAction(): Promise<SongAnalysisResult[]> {
   // Check for environment variables before fetching
   if (spotifyNotConfigured()) {
-      console.warn('Spotify API credentials not set. Returning empty trending list. Please add your SPOTIFY_CLIENT_ID.');
+      console.warn('Spotify API credentials not set. Returning empty trending list. Please add your NEXT_PUBLIC_SPOTIFY_CLIENT_ID.');
       return [];
   }
     

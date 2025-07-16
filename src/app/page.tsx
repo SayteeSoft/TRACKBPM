@@ -11,7 +11,7 @@ import { AlertTriangle } from "lucide-react";
 // Main page component is now a Server Component
 export default async function Home() {
   // Check if the Spotify client ID is configured.
-  const isSpotifyConfigured = !!process.env.SPOTIFY_CLIENT_ID;
+  const isSpotifyConfigured = !!process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID;
 
   let trendingSongs: SongAnalysisResult[] = [];
   if (isSpotifyConfigured) {
@@ -36,7 +36,7 @@ export default async function Home() {
                   Please go to your hosting provider (e.g., Netlify, Vercel) and add the following environment variable:
                 </p>
                 <code className="block w-full rounded bg-muted p-2 text-sm font-semibold text-foreground">
-                  SPOTIFY_CLIENT_ID=your_spotify_client_id_here
+                  NEXT_PUBLIC_SPOTIFY_CLIENT_ID=your_spotify_client_id_here
                 </code>
                 <p>
                   After adding the variable, you will need to redeploy your application for the changes to take effect.
