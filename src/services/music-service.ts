@@ -16,7 +16,6 @@ export type SongDetails = z.infer<typeof SongDetailsSchema>;
 // Initialize Spotify API client
 const spotifyApi = new SpotifyWebApi({
   clientId: process.env.SPOTIFY_CLIENT_ID,
-  clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
 });
 
 // Cache for the access token
@@ -25,30 +24,43 @@ let tokenCache = {
   expiresAt: 0,
 };
 
-// Function to get a valid access token
+// Function to get a valid access token without a client secret.
 async function getAccessToken() {
-  if (tokenCache.accessToken && Date.now() < tokenCache.expiresAt) {
-    return tokenCache.accessToken;
+    if (tokenCache.accessToken && Date.now() < tokenCache.expiresAt) {
+      return tokenCache.accessToken;
+    }
+  
+    try {
+      // This is a public endpoint that doesn't require a client secret.
+      const response = await fetch('https://accounts.spotify.com/api/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'grant_type=client_credentials&client_id=' + process.env.SPOTIFY_CLIENT_ID,
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Failed to get access token from Spotify: ${response.statusText}`);
+      }
+  
+      const data = await response.json();
+      const accessToken = data.access_token;
+      const expiresIn = data.expires_in;
+  
+      spotifyApi.setAccessToken(accessToken);
+  
+      tokenCache = {
+        accessToken,
+        expiresAt: Date.now() + (expiresIn * 1000 - 60000), // Refresh 1 minute before expiry
+      };
+      
+      return accessToken;
+    } catch (err) {
+      console.error('Something went wrong when retrieving an access token', err);
+      throw new Error('Could not authenticate with Spotify. Please ensure your SPOTIFY_CLIENT_ID is correct.');
+    }
   }
-
-  try {
-    const data = await spotifyApi.clientCredentialsGrant();
-    const accessToken = data.body['access_token'];
-    const expiresIn = data.body['expires_in'];
-
-    spotifyApi.setAccessToken(accessToken);
-
-    tokenCache = {
-      accessToken,
-      expiresAt: Date.now() + (expiresIn * 1000 - 60000), // Refresh 1 minute before expiry
-    };
-    
-    return accessToken;
-  } catch (err) {
-    console.error('Something went wrong when retrieving an access token', err);
-    throw new Error('Could not authenticate with Spotify.');
-  }
-}
 
 // Helper to format duration from ms to MM:SS
 const formatDuration = (ms: number) => {
