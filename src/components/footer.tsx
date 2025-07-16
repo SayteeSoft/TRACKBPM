@@ -2,8 +2,6 @@ import Link from 'next/link';
 import { SpotifyIcon } from './icons';
 
 export const Footer = () => {
-  const currentYear = new Date().getFullYear();
-
   return (
     <footer className="bg-gray-50 text-muted-foreground py-12">
       <div className="container mx-auto px-4 text-center text-sm">
@@ -17,7 +15,18 @@ export const Footer = () => {
         </div>
 
         <div className="border-t border-gray-200 pt-6 flex justify-center items-center gap-4">
-            <span>&copy; {currentYear} TRACK⚡BPM</span>
+            <span className="flex items-center justify-center">
+              &copy; 2025 TRACK
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="w-4 h-4 mx-0.5 text-black"
+              >
+                <path d="M11 21h-1l1-7H7l7-12h1l-1 7h4l-7 12z" />
+              </svg>
+              BPM
+            </span>
             <span className="text-gray-300">|</span>
             <Link href="/legal/privacy" className="hover:text-foreground transition-colors">
             Privacy Policy
