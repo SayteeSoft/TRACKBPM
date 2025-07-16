@@ -3,7 +3,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
 
 export const metadata: Metadata = {
-  title: 'BPMDetect',
+  title: 'TRACKBPM',
   description: 'Detect the BPM and key of any song.',
 };
 

@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Loader2, Search } from "lucide-react";
+import { Loader2, Search, Music } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -17,7 +17,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { analyzeSongAction, getTrendingSongsAction, SongAnalysisResult } from "./actions";
 import { SpotifyIcon, AppleMusicIcon, AmazonMusicIcon } from "@/components/icons";
@@ -28,23 +28,6 @@ const formSchema = z.object({
     message: "Please enter at least 3 characters.",
   }),
 });
-
-const LightningIcon = (props: React.SVGProps<SVGSVGElement>) => (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      {...props}
-    >
-      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-    </svg>
-  );
 
 const AdBanner = () => (
     <Card className="overflow-hidden shadow-md animate-in fade-in-0 duration-500 bg-muted/50">
@@ -217,16 +200,16 @@ export default function Home() {
       <header className="bg-primary text-primary-foreground py-8">
         <div className="container mx-auto px-4 text-center">
             <h1 className="text-6xl md:text-8xl font-black tracking-tighter flex items-center justify-center">
+                <span>TRACK</span>
+                <Music className="w-12 h-12 md:w-16 md:h-16 mx-1 text-white fill-white" />
                 <span>BPM</span>
-                <LightningIcon className="w-12 h-12 md:w-16 md:h-16 mx-1 text-white fill-white" />
-                <span>Detect</span>
             </h1>
         </div>
       </header>
 
       <div className="container mx-auto px-4 py-8 md:py-12 -mt-16">
         <Card className="max-w-3xl mx-auto shadow-2xl rounded-lg">
-            <Form {...form}>
+          <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="flex items-center p-2">
                 <FormField
                   control={form.control}

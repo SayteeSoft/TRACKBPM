@@ -4,28 +4,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { Music } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from 'next/navigation';
 
-
-const LightningIcon = (props: React.SVGProps<SVGSVGElement>) => (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      {...props}
-    >
-      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-    </svg>
-);
-  
 const AdBanner = ({ className }: { className?: string }) => (
     <div className={className}>
         <Card className="overflow-hidden shadow-md bg-muted/50 flex items-center justify-center h-full">
@@ -71,9 +54,9 @@ export default async function SongPage({ params }: { params: { artist: string; t
             <header className="bg-primary text-primary-foreground py-4">
                 <div className="container mx-auto px-4 flex justify-between items-center">
                     <Link href="/" className="text-4xl font-black tracking-tighter flex items-center justify-center">
+                        <span>TRACK</span>
+                        <Music className="w-8 h-8 mx-1 text-white fill-white" />
                         <span>BPM</span>
-                        <LightningIcon className="w-8 h-8 mx-1 text-white fill-white" />
-                        <span>Detect</span>
                     </Link>
                     {/* Future search bar could go here */}
                 </div>
