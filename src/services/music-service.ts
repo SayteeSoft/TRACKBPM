@@ -31,17 +31,23 @@ async function getAccessToken() {
     }
   
     try {
+      const clientId = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID;
+      if (!clientId) {
+        throw new Error('Spotify Client ID is not configured.');
+      }
+      
       // This is a public endpoint that doesn't require a client secret.
       const response = await fetch('https://accounts.spotify.com/api/token', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: 'grant_type=client_credentials&client_id=' + process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID,
+        body: 'grant_type=client_credentials&client_id=' + clientId,
       });
   
       if (!response.ok) {
-        throw new Error(`Failed to get access token from Spotify: ${response.statusText}`);
+        const errorBody = await response.text();
+        throw new Error(`Failed to get access token from Spotify: ${response.statusText} - ${errorBody}`);
       }
   
       const data = await response.json();
@@ -58,7 +64,10 @@ async function getAccessToken() {
       return accessToken;
     } catch (err) {
       console.error('Something went wrong when retrieving an access token', err);
-      throw new Error('Could not authenticate with Spotify. Please ensure your NEXT_PUBLIC_SPOTIFY_CLIENT_ID is correct.');
+      if (err instanceof Error && err.message.includes('configured')) {
+          throw err;
+      }
+      throw new Error('Could not authenticate with Spotify. Please ensure your NEXT_PUBLIC_SPOTIFY_CLIENT_ID is correct and available in your hosting environment.');
     }
   }
 
