@@ -9,6 +9,7 @@
  */
 
 import {ai} from '@/ai/genkit';
+import { getSongDetails, SongDetailsSchema } from '@/services/music-service';
 import {z} from 'genkit';
 
 const DetectBpmAndKeyInputSchema = z.object({
@@ -28,16 +29,30 @@ export async function detectBpmAndKey(input: DetectBpmAndKeyInput): Promise<Dete
   return detectBpmAndKeyFlow(input);
 }
 
+const getSongDetailsTool = ai.defineTool(
+  {
+    name: 'getSongDetails',
+    description: 'Get the details of a song, including BPM, key, and duration.',
+    inputSchema: DetectBpmAndKeyInputSchema,
+    outputSchema: SongDetailsSchema,
+  },
+  async (input) => {
+    return getSongDetails(input);
+  }
+);
+
+
 const prompt = ai.definePrompt({
   name: 'detectBpmAndKeyPrompt',
   input: {schema: DetectBpmAndKeyInputSchema},
   output: {schema: DetectBpmAndKeyOutputSchema},
-  prompt: `You are an AI music expert. Given a song title and artist, you will determine the BPM, key, and duration of the song.
+  prompt: `You are an AI music expert. Use the provided tool to get the details for the song.
 
   Song Title: {{{title}}}
   Artist: {{{artist}}}
 
-  Respond with the BPM as a number, the key as a string (e.g. C major), and the duration as a string in MM:SS format.`,
+  Respond with the exact BPM, key, and duration provided by the tool. Do not guess or use your own knowledge.`,
+  tools: [getSongDetailsTool],
 });
 
 const detectBpmAndKeyFlow = ai.defineFlow(
