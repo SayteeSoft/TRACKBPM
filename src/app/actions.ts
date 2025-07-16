@@ -25,6 +25,12 @@ export async function analyzeSongAction(input: DetectBpmAndKeyInput, includeDesc
   }
 
   try {
+    // Check for environment variables
+    if (!process.env.SPOTIFY_CLIENT_ID || !process.env.SPOTIFY_CLIENT_SECRET) {
+      console.error('Spotify API credentials are not set in the environment.');
+      throw new Error('The Spotify API is not configured. Please add credentials to the environment variables.');
+    }
+
     const songInfo = await detectBpmAndKey(parsedInput.data);
     const albumArt = await generateAlbumArt({ artist: parsedInput.data.artist, title: parsedInput.data.title });
     
@@ -46,12 +52,21 @@ export async function analyzeSongAction(input: DetectBpmAndKeyInput, includeDesc
     };
   } catch (error) {
     console.error('AI action failed:', error);
+    if (error instanceof Error && error.message.includes('Spotify')) {
+        throw error;
+    }
     throw new Error('Could not analyze the song. The model may not have information on it or it might be a temporary issue. Please try another song.');
   }
 }
 
 export async function getTrendingSongsAction(): Promise<SongAnalysisResult[]> {
   try {
+    // Check for environment variables before fetching
+    if (!process.env.SPOTIFY_CLIENT_ID || !process.env.SPOTIFY_CLIENT_SECRET) {
+        console.warn('Spotify API credentials not set. Returning empty trending list.');
+        return [];
+    }
+      
     const trendingSongsList = await getTrendingSongs();
     
     const songAnalysisPromises = trendingSongsList.map(song => analyzeSongAction(song));
