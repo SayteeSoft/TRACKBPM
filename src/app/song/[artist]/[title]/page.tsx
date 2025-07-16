@@ -7,13 +7,13 @@ import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 import { notFound } from 'next/navigation';
 
-const AdBanner = ({ className }: { className?: string }) => (
+const AdBanner = ({ className, width = 300, height = 250 }: { className?: string, width?: number, height?: number }) => (
     <div className={className}>
         <Card className="overflow-hidden shadow-md bg-muted/50 flex items-center justify-center h-full">
             <a href="#" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center p-4 h-full">
                 <div className="text-center">
                     <p className="text-xs font-semibold text-muted-foreground/50 mb-2">ADVERTISEMENT</p>
-                    <Image src="https://placehold.co/300x250.png" alt="Advertisement" width={300} height={250} data-ai-hint="advertisement banner" />
+                    <Image src={`https://placehold.co/${width}x${height}.png`} alt="Advertisement" width={width} height={height} data-ai-hint="advertisement banner" />
                 </div>
             </a>
         </Card>
@@ -107,7 +107,7 @@ export default async function SongPage({ params }: { params: { artist: string; t
                     </div>
                     <aside className="md:col-span-1 space-y-8">
                        <AdBanner />
-                       <AdBanner />
+                       <AdBanner width={160} height={600} />
                     </aside>
                 </div>
             </div>
