@@ -1,4 +1,3 @@
-import { Music } from 'lucide-react';
 import Link from 'next/link';
 
 export const Header = () => {
@@ -10,7 +9,7 @@ export const Header = () => {
           className="text-4xl font-black tracking-tighter flex items-center justify-center"
         >
           <span>TRACK</span>
-          <Music className="w-8 h-8 mx-1 text-white fill-white" />
+          <span className="text-white mx-1">⚡︎</span>
           <span>BPM</span>
         </Link>
       </div>
