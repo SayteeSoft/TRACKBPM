@@ -5,7 +5,7 @@ import { Footer } from '@/components/footer';
 import { Header } from '@/components/header';
 
 export const metadata: Metadata = {
-  title: 'TRACKBPM',
+  title: 'TRACK⚡BPM',
   description: 'Detect the BPM and key of any song.',
 };
 

@@ -8,9 +8,7 @@ export const Header = () => {
           href="/"
           className="text-6xl md:text-8xl font-black tracking-tighter flex items-center justify-center"
         >
-          <span>TRACK</span>
-          <span className="text-white mx-1">⚡︎</span>
-          <span>BPM</span>
+          TRACK⚡BPM
         </Link>
       </div>
     </header>

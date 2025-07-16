@@ -17,7 +17,7 @@ export const Footer = () => {
         </div>
 
         <div className="border-t border-gray-200 pt-6 flex justify-center items-center gap-4">
-            <span>&copy; {currentYear} TRACKBPM</span>
+            <span>&copy; {currentYear} TRACK⚡BPM</span>
             <span className="text-gray-300">|</span>
             <Link href="/legal/privacy" className="hover:text-foreground transition-colors">
             Privacy Policy
