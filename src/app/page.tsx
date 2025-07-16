@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Loader2, Search, Music } from "lucide-react";
+import { Loader2, Search } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -196,18 +196,8 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen w-full bg-gray-50 font-body">
-      <header className="bg-primary text-primary-foreground py-8">
-        <div className="container mx-auto px-4 text-center">
-            <h1 className="text-6xl md:text-8xl font-black tracking-tighter flex items-center justify-center">
-                <span>TRACK</span>
-                <Music className="w-12 h-12 md:w-16 md:h-16 mx-1 text-white fill-white" />
-                <span>BPM</span>
-            </h1>
-        </div>
-      </header>
-
-      <div className="container mx-auto px-4 py-8 md:py-12 -mt-16">
+    <main className="w-full font-body">
+      <div className="container mx-auto px-4 py-8 md:py-12">
         <Card className="max-w-3xl mx-auto shadow-2xl rounded-lg">
           <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="flex items-center p-2">
