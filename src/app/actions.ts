@@ -1,3 +1,4 @@
+
 'use server';
 
 import { detectBpmAndKey, DetectBpmAndKeyInput, DetectBpmAndKeyOutput } from '@/ai/flows/detect-bpm-and-key';
@@ -31,7 +32,7 @@ export async function analyzeSongAction(input: DetectBpmAndKeyInput, includeDesc
   // Check for environment variables first
   if (spotifyNotConfigured()) {
     console.error('Spotify API credentials are not set in the environment.');
-    throw new Error('The Spotify API is not configured. Please add your SPOTIFY_CLIENT_ID to the environment variables.');
+    throw new Error('The Spotify integration is not configured. Please add your SPOTIFY_CLIENT_ID as an environment variable in your hosting provider settings.');
   }
 
   try {
