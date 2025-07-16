@@ -2,7 +2,7 @@
 
 import { detectBpmAndKey, DetectBpmAndKeyInput, DetectBpmAndKeyOutput } from '@/ai/flows/detect-bpm-and-key';
 import { generateAlbumArt, GenerateAlbumArtInput } from '@/ai/flows/generate-album-art';
-import { getDailySongs } from '@/ai/flows/get-daily-songs';
+import { getTrendingSongs } from '@/ai/flows/get-trending-songs';
 import { z } from 'zod';
 
 const ActionInputSchema = z.object({
@@ -40,11 +40,11 @@ export async function analyzeSongAction(input: DetectBpmAndKeyInput): Promise<So
   }
 }
 
-export async function getDailySongsAction(): Promise<SongAnalysisResult[]> {
+export async function getTrendingSongsAction(): Promise<SongAnalysisResult[]> {
   try {
-    const dailySongsList = await getDailySongs();
+    const trendingSongsList = await getTrendingSongs();
     
-    const songAnalysisPromises = dailySongsList.map(song => analyzeSongAction(song));
+    const songAnalysisPromises = trendingSongsList.map(song => analyzeSongAction(song));
     
     const results = await Promise.allSettled(songAnalysisPromises);
 

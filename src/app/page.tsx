@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Loader2, Music, Search } from "lucide-react";
+import { Loader2, Search } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -18,7 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { analyzeSongAction, getDailySongsAction, SongAnalysisResult } from "./actions";
+import { analyzeSongAction, getTrendingSongsAction, SongAnalysisResult } from "./actions";
 import { SpotifyIcon, AppleMusicIcon, AmazonMusicIcon } from "@/components/icons";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -44,6 +44,17 @@ const LightningIcon = (props: React.SVGProps<SVGSVGElement>) => (
       <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
     </svg>
   );
+
+const AdBanner = () => (
+    <Card className="overflow-hidden shadow-md animate-in fade-in-0 duration-500 bg-muted/50">
+        <a href="#" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center p-4 h-full">
+            <div className="text-center">
+                <p className="text-sm font-semibold text-muted-foreground">Advertisement</p>
+                <Image src="https://placehold.co/728x90.png" alt="Advertisement" width={728} height={90} data-ai-hint="advertisement banner" />
+            </div>
+        </a>
+    </Card>
+);
 
 const SongCard = ({ result }: { result: SongAnalysisResult }) => (
   <Card className="overflow-hidden shadow-md animate-in fade-in-0 duration-500">
@@ -132,9 +143,9 @@ const SongCardSkeleton = () => (
 
 export default function Home() {
   const [searchResults, setSearchResults] = useState<SongAnalysisResult[]>([]);
-  const [dailySongs, setDailySongs] = useState<SongAnalysisResult[]>([]);
+  const [trendingSongs, setTrendingSongs] = useState<SongAnalysisResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [isDailyLoading, setIsDailyLoading] = useState(true);
+  const [isTrendingLoading, setIsTrendingLoading] = useState(true);
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -145,22 +156,22 @@ export default function Home() {
   });
 
   useEffect(() => {
-    const fetchDailySongs = async () => {
-      setIsDailyLoading(true);
+    const fetchTrendingSongs = async () => {
+      setIsTrendingLoading(true);
       try {
-        const songs = await getDailySongsAction();
-        setDailySongs(songs);
+        const songs = await getTrendingSongsAction();
+        setTrendingSongs(songs);
       } catch (error) {
         toast({
           variant: "destructive",
-          title: "Failed to load daily songs",
+          title: "Failed to load trending songs",
           description: "Please try refreshing the page.",
         });
       } finally {
-        setIsDailyLoading(false);
+        setIsTrendingLoading(false);
       }
     };
-    fetchDailySongs();
+    fetchTrendingSongs();
   }, [toast]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -251,11 +262,14 @@ export default function Home() {
             <SongCard key={`search-${result.title}-${index}`} result={result} />
           ))}
 
-          {isDailyLoading ? (
-            Array.from({ length: 5 }).map((_, index) => <SongCardSkeleton key={`skeleton-${index}`} />)
+          {isTrendingLoading ? (
+            Array.from({ length: 9 }).map((_, index) => <SongCardSkeleton key={`skeleton-${index}`} />)
           ) : (
-            dailySongs.map((result, index) => (
-              <SongCard key={`daily-${result.title}-${index}`} result={result} />
+            trendingSongs.map((result, index) => (
+              <Fragment key={`trending-${result.title}-${index}`}>
+                <SongCard result={result} />
+                {(index + 1) % 3 === 0 && <AdBanner />}
+              </Fragment>
             ))
           )}
         </section>
