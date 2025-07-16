@@ -20,6 +20,7 @@ export type DetectBpmAndKeyInput = z.infer<typeof DetectBpmAndKeyInputSchema>;
 const DetectBpmAndKeyOutputSchema = z.object({
   bpm: z.number().describe('The BPM (beats per minute) of the song.'),
   key: z.string().describe('The musical key of the song (e.g., C major, A minor).'),
+  duration: z.string().describe('The duration of the song in MM:SS format.'),
 });
 export type DetectBpmAndKeyOutput = z.infer<typeof DetectBpmAndKeyOutputSchema>;
 
@@ -31,12 +32,12 @@ const prompt = ai.definePrompt({
   name: 'detectBpmAndKeyPrompt',
   input: {schema: DetectBpmAndKeyInputSchema},
   output: {schema: DetectBpmAndKeyOutputSchema},
-  prompt: `You are an AI music expert. Given a song title and artist, you will determine the BPM and key of the song.
+  prompt: `You are an AI music expert. Given a song title and artist, you will determine the BPM, key, and duration of the song.
 
   Song Title: {{{title}}}
   Artist: {{{artist}}}
 
-  Respond with the BPM as a number, and the key as a string (e.g. C major).`,
+  Respond with the BPM as a number, the key as a string (e.g. C major), and the duration as a string in MM:SS format.`,
 });
 
 const detectBpmAndKeyFlow = ai.defineFlow(
