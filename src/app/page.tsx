@@ -102,9 +102,9 @@ export default function Home() {
       <header className="bg-primary text-primary-foreground py-8">
         <div className="container mx-auto px-4 text-center">
             <h1 className="text-6xl md:text-8xl font-black tracking-tighter flex items-center justify-center">
-                <span>SONG</span>
-                <LightningIcon className="w-12 h-12 md:w-16 md:h-16 mx-1 text-white fill-white" />
                 <span>BPM</span>
+                <LightningIcon className="w-12 h-12 md:w-16 md:h-16 mx-1 text-white fill-white" />
+                <span>Detch</span>
             </h1>
         </div>
       </header>
@@ -135,11 +135,11 @@ export default function Home() {
                           </Button>
                         </div>
                       </FormControl>
-                      <FormMessage className="text-center mt-2 max-w-3xl mx-auto px-4" />
                     </FormItem>
                   )}
                 />
               </form>
+              <FormMessage className="text-center mt-2 max-w-3xl mx-auto px-4" />
             </Form>
           </CardContent>
         </Card>
