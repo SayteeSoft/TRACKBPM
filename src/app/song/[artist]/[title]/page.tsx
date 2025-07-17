@@ -1,35 +1,13 @@
 import { analyzeSongAction } from "@/app/actions";
 import { AppleMusicIcon, AmazonMusicIcon, SpotifyIcon } from "@/components/icons";
+import { MetricCard } from "@/components/metric-card";
+import { SongPageAdBanner } from "@/components/song-page-ad-banner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 import { notFound } from 'next/navigation';
-
-const AdBanner = ({ className, width = 300, height = 250 }: { className?: string, width?: number, height?: number }) => (
-    <div className={className}>
-        <Card className="overflow-hidden shadow-md bg-muted/50 flex items-center justify-center h-full">
-            <a href="#" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center p-4 h-full">
-                <div className="text-center">
-                    <p className="text-xs font-semibold text-muted-foreground/50 mb-2">ADVERTISEMENT</p>
-                    <Image src={`https://placehold.co/${width}x${height}.png`} alt="Advertisement" width={width} height={height} data-ai-hint="advertisement banner" />
-                </div>
-            </a>
-        </Card>
-    </div>
-);
-
-const MetricCard = ({ title, value }: { title: string, value: string | number }) => (
-    <Card className="text-center">
-        <CardHeader className="p-2 pb-1">
-            <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
-        </CardHeader>
-        <CardContent className="p-2 pt-0">
-            <p className="text-2xl font-bold">{value}</p>
-        </CardContent>
-    </Card>
-);
 
 export default async function SongPage({ params }: { params: { artist: string; title: string } }) {
     const artist = decodeURIComponent(params.artist);
@@ -71,7 +49,7 @@ export default async function SongPage({ params }: { params: { artist: string; t
                             </div>
                         </div>
 
-                        <AdBanner className="my-8 h-48" />
+                        <SongPageAdBanner className="my-8 h-48" />
 
                         <section className="mt-8">
                             <h2 className="text-2xl font-bold mb-4">Song Metrics</h2>
@@ -106,8 +84,8 @@ export default async function SongPage({ params }: { params: { artist: string; t
 
                     </div>
                     <aside className="md:col-span-1 space-y-8">
-                    <AdBanner />
-                    <AdBanner width={160} height={600} />
+                        <SongPageAdBanner />
+                        <SongPageAdBanner width={160} height={600} />
                     </aside>
                 </div>
             </div>
