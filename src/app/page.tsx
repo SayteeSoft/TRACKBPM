@@ -8,21 +8,23 @@ import { SongCardSkeleton } from "@/components/song-card-skeleton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertTriangle } from "lucide-react";
 
-// Main page component is now a Server Component
 export default async function Home() {
-  // Check if the Spotify client ID is configured.
-  const isSpotifyConfigured = !!process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID;
-
   let trendingSongs: SongAnalysisResult[] = [];
-  if (isSpotifyConfigured) {
+  let isConfigured = true;
+
+  try {
+    // Attempt to fetch songs. If this fails due to a missing key, the catch block will handle it.
     trendingSongs = await getTrendingSongsAction();
+  } catch (error) {
+    console.error("Failed to get trending songs, likely a configuration issue:", error);
+    isConfigured = false;
   }
 
   return (
     <main className="w-full font-body">
       <div className="container mx-auto px-4 py-8 md:py-12">
         <section className="space-y-4 max-w-3xl mx-auto">
-          {!isSpotifyConfigured ? (
+          {!isConfigured ? (
             <Card className="border-destructive/50">
               <CardHeader className="flex flex-row items-center gap-4">
                 <AlertTriangle className="h-8 w-8 text-destructive" />

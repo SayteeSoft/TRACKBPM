@@ -20,6 +20,7 @@ export type SongAnalysisResult = DetectBpmAndKeyOutput & {
 };
 
 function spotifyNotConfigured() {
+    // This check is now the single source of truth for configuration.
     return !process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID;
 }
 
@@ -29,7 +30,7 @@ export async function analyzeSongAction(input: DetectBpmAndKeyInput, includeDesc
     throw new Error('Invalid input: Title and artist are required.');
   }
 
-  // Check for environment variables first
+  // Centralized check for environment variables
   if (spotifyNotConfigured()) {
     console.error('Spotify API credentials are not set in the environment.');
     throw new Error('The Spotify integration is not configured. Please add your NEXT_PUBLIC_SPOTIFY_CLIENT_ID as an environment variable in your hosting provider settings.');
@@ -65,25 +66,24 @@ export async function analyzeSongAction(input: DetectBpmAndKeyInput, includeDesc
 }
 
 export async function getTrendingSongsAction(): Promise<SongAnalysisResult[]> {
-  // Check for environment variables before fetching
-  if (spotifyNotConfigured()) {
-      console.warn('Spotify API credentials not set. Returning empty trending list. Please add your NEXT_PUBLIC_SPOTIFY_CLIENT_ID.');
-      return [];
-  }
-    
+  // The initial check is now removed from here and handled by the page's try/catch block.
+  // The underlying service call will throw an error if not configured, which is what we want.
   try {
     const trendingSongsList = await getTrendingSongs();
     
+    // Using Promise.allSettled to ensure that even if one song fails, the others are still processed.
     const songAnalysisPromises = trendingSongsList.map(song => analyzeSongAction(song));
     
     const results = await Promise.allSettled(songAnalysisPromises);
 
+    // Filter for only fulfilled promises and return their values.
     return results
       .filter(result => result.status === 'fulfilled')
       .map(result => (result as PromiseFulfilledResult<SongAnalysisResult>).value);
 
   } catch (error) {
     console.error('Failed to get daily songs:', error);
-    return [];
+    // Re-throw the error so the calling component (the page) can catch it and display the message.
+    throw error;
   }
 }
